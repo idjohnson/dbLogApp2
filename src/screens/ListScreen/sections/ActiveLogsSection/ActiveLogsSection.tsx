@@ -1,5 +1,5 @@
 import { MoreHorizontalIcon, ChevronUpIcon, ChevronDownIcon } from "lucide-react";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Avatar,
   AvatarFallback,
@@ -16,6 +16,21 @@ import {
 } from "../../../../components/ui/table";
 import { Button } from "../../../../components/ui/button";
 import { LogDetailsModal } from "./LogDetailsModal.tsx";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+type LogEntry = {
+  id: string;
+  body: string;
+  project: string;
+  type: string;
+  date: string;
+  avatar_src: string;
+  owner: string;
+  description: string;
+  created_at: string;
+  status: string;
+};
 
 // Define data structure for log entries
 const logEntries = [
@@ -223,8 +238,16 @@ interface ActiveLogsSectionProps {
 export const ActiveLogsSection = ({ searchQuery }: ActiveLogsSectionProps): JSX.Element => {
   const [sortField, setSortField] = useState<SortField>('id');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-  const [selectedLog, setSelectedLog] = useState<typeof logEntries[0] | null>(null);
+  const [selectedLog, setSelectedLog] = useState<LogEntry | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([]);
+
+  useEffect(() => {
+    fetch(`${API_URL}/logs`)
+      .then(res => res.json())
+      .then(setLogEntries)
+      .catch(() => setLogEntries([]));
+  }, []);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
