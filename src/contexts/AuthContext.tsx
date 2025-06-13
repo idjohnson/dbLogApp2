@@ -28,9 +28,15 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
 
+  const VALID_USERNAME = import.meta.env.VITE_APP_USERNAME;
+  const VALID_PASSWORD = import.meta.env.VITE_APP_PASSWORD;
+
   const login = (username: string, password: string): boolean => {
-    // Simple authentication - in a real app, this would validate against a backend
-    if (username.trim() && password.trim()) {
+    // Validate against environment variables
+    if (
+      username === VALID_USERNAME &&
+      password === VALID_PASSWORD
+    ) {
       setUser({ username });
       return true;
     }

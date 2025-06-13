@@ -68,6 +68,7 @@ export const LoginScreen = (): JSX.Element => {
                 className="h-12 text-base bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                 placeholder="Enter your password"
                 disabled={isLoading}
+                autoComplete="current-password"
               />
             </div>
           </div>
