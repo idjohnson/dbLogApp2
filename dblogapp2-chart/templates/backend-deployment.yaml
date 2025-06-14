@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: {{ .Values.backend.image }}
+          env:
+            - name: POSTGRES_HOST
+              value: db
+            - name: POSTGRES_DB
+              value: {{ .Values.db.database | quote }}
+            - name: POSTGRES_USER
+              value: {{ .Values.db.user | quote }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.db.password | quote }}
+            - name: POSTGRES_PORT
+              value: "{{ .Values.db.port }}"
+          ports:
+            - containerPort: {{ .Values.backend.service.port }}

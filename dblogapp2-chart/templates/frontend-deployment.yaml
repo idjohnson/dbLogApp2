@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: {{ .Values.frontend.image }}
+          env:
+            - name: VITE_API_URL
+              value: "http://backend:5000/api"
+            - name: VITE_APP_USERNAME
+              value: {{ .Values.frontend.username | quote }}
+            - name: VITE_APP_PASSWORD
+              value: {{ .Values.frontend.password | quote }}
+          ports:
+            - containerPort: {{ .Values.frontend.service.port }}

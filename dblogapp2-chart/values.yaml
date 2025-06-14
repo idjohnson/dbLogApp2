@@ -1,0 +1,42 @@
+frontend:
+  image: your-frontend-image:latest
+  username: admin
+  password: mypass
+  service:
+    type: NodePort
+    port: 5173
+
+backend:
+  image: your-backend-image:latest
+  service:
+    type: NodePort
+    port: 5000
+
+db:
+  image: postgres:16
+  database: logapp
+  user: postgres
+  password: postgrespass
+  port: 5432
+  persistence:
+    enabled: false
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: azuredns-tpkpw
+    ingress.kubernetes.io/ssl-redirect: "true"
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.org/websocket-services: frontend
+  hosts:
+    - host: dbapp.tpk.pw
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - dbapp.tpk.pw
+      secretName: dbapp-tls
