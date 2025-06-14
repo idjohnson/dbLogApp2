@@ -9,7 +9,7 @@ env:
   REGISTRY: docker.io
   DOCKERHUB_REPO_BACKEND: idjohnson/dblogapp2-backend
   DOCKERHUB_REPO_FRONTEND: idjohnson/dblogapp2-frontend
-  HELM_CHART_REPO: idjohnson/dblogapp2-chart
+  HELM_CHART_REPO: idjohnson
 
 jobs:
   build-and-push:
