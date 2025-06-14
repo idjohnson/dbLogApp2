@@ -243,10 +243,18 @@ export const ActiveLogsSection = ({ searchQuery }: ActiveLogsSectionProps): JSX.
   const [logEntries, setLogEntries] = useState<LogEntry[]>([]);
 
   useEffect(() => {
-    fetch(`${API_URL}/logs`)
-      .then(res => res.json())
-      .then(setLogEntries)
-      .catch(() => setLogEntries([]));
+    const fetchLogs = () => {
+      fetch(`${API_URL}/logs`)
+        .then(res => res.json())
+        .then(setLogEntries)
+        .catch(() => setLogEntries([]));
+    };
+
+    fetchLogs(); // initial fetch
+
+    const interval = setInterval(fetchLogs, 5000); // poll every 5 seconds
+
+    return () => clearInterval(interval); // cleanup on unmount
   }, []);
 
   const handleSort = (field: SortField) => {

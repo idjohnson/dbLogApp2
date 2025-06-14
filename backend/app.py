@@ -4,7 +4,16 @@ import psycopg2
 import os
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+# CORS(app, resources={r"/api/*": {"origins": "*"}})  # Enable CORS for all routes# ...existing code...
+
+# Configure CORS
+# When 'supports_credentials' is True, the 'Access-Control-Allow-Origin'
+# header cannot be a wildcard ('*') and must specify the exact origin(s).
+# Replace "http://localhost:3000" with the actual origin of your frontend application.
+CORS(app, resources={
+    r"/api/*": {"origins": "*", "supports_credentials": True} # IMPORTANT: Change this to your frontend's actual origin
+})
+# ...existing code...
 
 def get_db_connection():
     return psycopg2.connect(
