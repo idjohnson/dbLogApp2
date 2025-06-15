@@ -38,4 +38,15 @@ metadata:
   name: db-init-sql
 data:
   init.sql: |-
-{{ .Files.Get "init.sql" | indent 4 }}
+    CREATE TABLE IF NOT EXISTS logs (
+        id VARCHAR(20) PRIMARY KEY,
+        body TEXT NOT NULL,
+        project TEXT NOT NULL,
+        type TEXT NOT NULL,
+        date TEXT NOT NULL,
+        avatar_src TEXT,
+        owner TEXT NOT NULL,
+        description TEXT,
+        created_at TIMESTAMP,
+        status TEXT NOT NULL
+    );

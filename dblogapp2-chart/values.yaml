@@ -1,15 +1,18 @@
+apiHost: dbapp.tpk.pw
+
 frontend:
   image: your-frontend-image:latest
   username: admin
   password: mypass
+  viteApiUrl: "https://dbapp.tpk.pw/api"
   service:
-    type: NodePort
+    type: ClusterIP
     port: 5173
 
 backend:
   image: your-backend-image:latest
   service:
-    type: NodePort
+    type: ClusterIP
     port: 5000
 
 db:
@@ -34,8 +37,14 @@ ingress:
   hosts:
     - host: dbapp.tpk.pw
       paths:
+        - path: /api/
+          pathType: Prefix
+          backendService: backend
+          backendPort: 5000
         - path: /
-          pathType: ImplementationSpecific
+          pathType: Prefix
+          backendService: frontend
+          backendPort: 5173
   tls:
     - hosts:
         - dbapp.tpk.pw

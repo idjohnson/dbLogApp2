@@ -17,7 +17,7 @@ spec:
           image: {{ .Values.frontend.image }}
           env:
             - name: VITE_API_URL
-              value: "http://backend:5000/api"
+              value: {{ .Values.frontend.viteApiUrl | quote }}
             - name: VITE_APP_USERNAME
               value: {{ .Values.frontend.username | quote }}
             - name: VITE_APP_PASSWORD
