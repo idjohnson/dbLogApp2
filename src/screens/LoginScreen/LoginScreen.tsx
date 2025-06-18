@@ -39,8 +39,8 @@ export const LoginScreen = (): JSX.Element => {
             className="mx-auto mb-4"
             style={{ maxWidth: "100%", height: "auto" }}
           />
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Log App</h1>
-          <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-8">Sign in to your account</h2>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">DBee Log App</h1>
+          <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-8">Sign in to your hive</h2>
         </div>
         
         <form className="space-y-6" onSubmit={handleSubmit}>

@@ -16,9 +16,16 @@ import {
 interface HeaderSectionProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  viewMode: "list" | "grid" | "calendar";
+  onViewModeChange: (mode: "list" | "grid" | "calendar") => void;
 }
 
-export const HeaderSection = ({ searchQuery, onSearchChange }: HeaderSectionProps): JSX.Element => {
+export const HeaderSection = ({
+  searchQuery,
+  onSearchChange,
+  viewMode,
+  onViewModeChange,
+}: HeaderSectionProps): JSX.Element => {
   return (
     <header className="w-full py-6 bg-transparent">
       <h1 className="mb-4 text-xl font-semibold tracking-[-0.20px] font-['Inter',Helvetica] text-black dark:text-white">
@@ -47,7 +54,10 @@ export const HeaderSection = ({ searchQuery, onSearchChange }: HeaderSectionProp
         <div className="ml-auto">
           <ToggleGroup
             type="single"
-            defaultValue="list"
+            value={viewMode}
+            onValueChange={(val) => {
+              if (val) onViewModeChange(val as "list" | "grid" | "calendar");
+            }}
             className="p-1 bg-[#f7f7f7] dark:bg-gray-800 rounded-lg"
           >
             <ToggleGroupItem

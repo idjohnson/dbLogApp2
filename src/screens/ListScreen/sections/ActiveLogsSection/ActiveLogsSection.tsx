@@ -37,9 +37,13 @@ type SortDirection = 'asc' | 'desc';
 
 interface ActiveLogsSectionProps {
   searchQuery: string;
+  viewMode: "list" | "grid" | "calendar";
 }
 
-export const ActiveLogsSection = ({ searchQuery }: ActiveLogsSectionProps): JSX.Element => {
+export const ActiveLogsSection = ({
+  searchQuery,
+  viewMode,
+}: ActiveLogsSectionProps): JSX.Element => {
   const [sortField, setSortField] = useState<SortField>('id');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [selectedLog, setSelectedLog] = useState<LogEntry | null>(null);
@@ -130,6 +134,133 @@ export const ActiveLogsSection = ({ searchQuery }: ActiveLogsSectionProps): JSX.
 
     return filtered;
   }, [logEntries, searchQuery, sortField, sortDirection]);
+
+  // Helper to group logs by month for calendar view
+  const logsByMonth = useMemo(() => {
+    const groups: Record<string, LogEntry[]> = {};
+    logEntries.forEach((entry) => {
+      const date = new Date(entry.created_at);
+      const key = date.toLocaleString("default", { year: "numeric", month: "long" });
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(entry);
+    });
+    return groups;
+  }, [logEntries]);
+
+  if (viewMode === "grid") {
+    return (
+      <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
+        {filteredAndSortedEntries.length === 0 && (
+          <div className="col-span-full flex items-center justify-center py-12">
+            <p className="text-gray-500 dark:text-gray-400 text-lg">No logs found matching your search.</p>
+          </div>
+        )}
+        {filteredAndSortedEntries.map((entry, idx) => (
+          <div
+            key={entry.id}
+            className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 flex flex-col gap-2 shadow"
+          >
+            <div className="flex items-center gap-3">
+              <Avatar className="w-10 h-10 bg-[#f7f7f7] dark:bg-gray-700">
+                <AvatarImage src={entry.avatar_src} alt="User avatar" />
+                <AvatarFallback className="text-gray-600 dark:text-gray-300">
+                  {entry.owner.split(" ").map((n) => n[0]).join("")}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <div className="font-semibold text-base text-black dark:text-white">{entry.body}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">{entry.owner}</div>
+              </div>
+            </div>
+            <div className="flex gap-2 mt-2">
+              <Badge variant="outline" className="text-xs">{entry.project}</Badge>
+              <Badge variant="outline" className="text-xs">{entry.type}</Badge>
+            </div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{entry.date}</div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="self-end mt-2"
+              onClick={() => handleViewDetails(entry)}
+            >
+              Details
+            </Button>
+          </div>
+        ))}
+        <LogDetailsModal
+          log={selectedLog}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      </div>
+    );
+  }
+
+  if (viewMode === "calendar") {
+    const months = Object.keys(logsByMonth).sort(
+      (a, b) => new Date(b + " 1").getTime() - new Date(a + " 1").getTime()
+    );
+    return (
+      <div className="p-6 w-full">
+        {months.length === 0 && (
+          <div className="flex items-center justify-center py-12">
+            <p className="text-gray-500 dark:text-gray-400 text-lg">No logs found matching your search.</p>
+          </div>
+        )}
+        {months.map((month) => {
+          // Filter by search query
+          const logs = logsByMonth[month].filter((entry) =>
+            entry.body.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+          if (logs.length === 0) return null;
+          return (
+            <div key={month} className="mb-8">
+              <h2 className="text-lg font-semibold text-black dark:text-white mb-4">{month}</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {logs.map((entry) => (
+                  <div
+                    key={entry.id}
+                    className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 flex flex-col gap-2 shadow"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Avatar className="w-10 h-10 bg-[#f7f7f7] dark:bg-gray-700">
+                        <AvatarImage src={entry.avatar_src} alt="User avatar" />
+                        <AvatarFallback className="text-gray-600 dark:text-gray-300">
+                          {entry.owner.split(" ").map((n) => n[0]).join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-semibold text-base text-black dark:text-white">{entry.body}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">{entry.owner}</div>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-2">
+                      <Badge variant="outline" className="text-xs">{entry.project}</Badge>
+                      <Badge variant="outline" className="text-xs">{entry.type}</Badge>
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{entry.date}</div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="self-end mt-2"
+                      onClick={() => handleViewDetails(entry)}
+                    >
+                      Details
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+        <LogDetailsModal
+          log={selectedLog}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col w-full items-start">

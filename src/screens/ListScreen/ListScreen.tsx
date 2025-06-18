@@ -7,6 +7,7 @@ import { SettingsScreen } from "../SettingsScreen";
 export const ListScreen = (): JSX.Element => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSection, setActiveSection] = useState("logs");
+  const [viewMode, setViewMode] = useState<"list" | "grid" | "calendar">("list");
 
   const renderMainContent = () => {
     switch (activeSection) {
@@ -19,8 +20,10 @@ export const ListScreen = (): JSX.Element => {
             <HeaderSection 
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
             />
-            <ActiveLogsSection searchQuery={searchQuery} />
+            <ActiveLogsSection searchQuery={searchQuery} viewMode={viewMode} />
           </>
         );
     }
