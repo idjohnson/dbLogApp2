@@ -31,6 +31,14 @@ export const LoginScreen = (): JSX.Element => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
+          {/* Static large logo */}
+          <img
+            src="/dblogapp_logo_lg.png"
+            width={320}
+            alt="App Logo"
+            className="mx-auto mb-4"
+            style={{ maxWidth: "100%", height: "auto" }}
+          />
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Log App</h1>
           <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-8">Sign in to your account</h2>
         </div>
